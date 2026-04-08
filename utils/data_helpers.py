@@ -8,7 +8,8 @@ from datetime import datetime
 
 import pandas as pd
 
-AUTO_ID_COUNTER = 0
+import time as _time
+AUTO_ID_COUNTER = int(_time.time() * 1000) % 100_000  # seed بالوقت لتجنب التكرار عند reload
 from rapidfuzz import process as rf_proc, fuzz as rf_fuzz
 
 # تسلسل شائع في سلة/إكسيل: ...jpg,https://...

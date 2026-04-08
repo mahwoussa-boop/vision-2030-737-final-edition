@@ -363,7 +363,9 @@ def _extract_sku(r: dict, pname: str = "") -> str:
         if u.startswith("http"):
             return _sanitize_sku(u, pname=pname)
 
-    return ""
+    # Last Resort: توليد MSNG hash من اسم المنتج — لا تُرجع فارغاً أبداً
+    # سلة ترفض أي صف بدون SKU → هذا السطر يضمن القبول 100%
+    return _sanitize_sku("", pname=pname)
 
 
 def _extract_weight(r: dict) -> tuple:
