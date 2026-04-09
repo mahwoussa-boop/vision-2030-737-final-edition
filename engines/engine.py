@@ -744,6 +744,7 @@ def _smart_rename_columns(df):
             "img": "صورة المنتج", "photo": "صورة المنتج", "thumbnail": "صورة المنتج",
             "url": "رابط المنتج", "link": "رابط المنتج", "product_url": "رابط المنتج",
             "brand": "الماركة",
+            "description": "الوصف", "desc": "الوصف", "raw_description": "الوصف",
         }
         _cols_lower = {str(c).lower().strip(): c for c in cols}
         _has_arabic_name = any(
@@ -1604,6 +1605,10 @@ class CompIndex:
             self.extra_urls = self.df[self.url_col].fillna("").astype(str).str.strip().tolist()
         else:
             self.extra_urls = [""] * n
+        if "raw_description" in self.df.columns:
+            self.raw_descriptions = self.df["raw_description"].fillna("").astype(str).tolist()
+        else:
+            self.raw_descriptions = [""] * n
 
     def search(self, our_norm, our_br, our_sz, our_tp, our_gd, our_pline="", top_n=6):
         """بحث vectorized بـ rapidfuzz process.extract مع مقارنة خط الإنتاج"""
@@ -1818,9 +1823,9 @@ class CompIndex:
                 "name": name, "score": score,
                 "price": self.prices[idx], "product_id": self.ids[idx],
                 "brand": c_br, "size": c_sz, "type": c_tp, "gender": c_gd,
-                "competitor": self.comp_name,
                 "image_url": img_u, "product_url": url_u,
                 "thumb": img_u,
+                "raw_description": self.raw_descriptions[idx] if idx < len(self.raw_descriptions) else "",
             })
 
         cands.sort(key=lambda x: x["score"], reverse=True)
@@ -1871,6 +1876,7 @@ def _ai_batch(batch):
         cands = "\n".join(
             f"  {j+1}. {c['name']} | {int(c.get('size',0))}ml | "
             f"{c.get('type','?')} | {c.get('gender','?')} | {c.get('price',0):.0f}ر.س"
+            f"{' | وصف: ' + c.get('raw_description','')[:150] if c.get('raw_description') else ''}"
             for j, c in enumerate(it["candidates"])
         )
         lines.append(f"[{i+1}] منتجنا: «{it['our']}» ({it['price']:.0f}ر.س)\n{cands}")
@@ -2090,7 +2096,8 @@ def _row(product, our_price, our_id, brand, size, ptype, gender,
                     جميع_المنافسين=[], مصدر_المطابقة=src or "—",
                     تاريخ_المطابقة=datetime.now().strftime("%Y-%m-%d"),
                     صورة_منتجنا=our_img or "", رابط_منتجنا=our_url or "",
-                    رابط_المنافس="", تبرير_AI=str(ai_reason or "").strip())
+                    رابط_المنافس="", تبرير_AI=str(ai_reason or "").strip(),
+                    raw_description=str(best.get("raw_description") or "").strip() if best else "")
 
     cp    = float(best.get("price") or 0)
     score = float(best.get("score") or 0)
@@ -2156,7 +2163,8 @@ def _row(product, our_price, our_id, brand, size, ptype, gender,
                 صورة_منتجنا=our_img or "", رابط_منتجنا=our_url or "",
                 صورة_المنافس=comp_img,
                 رابط_المنافس=str(best.get("product_url") or best.get("url") or "").strip(),
-                تبرير_AI=str(ai_reason or "").strip())
+                تبرير_AI=str(ai_reason or "").strip(),
+                raw_description=str(best.get("raw_description") or "").strip())
 
 
 # ═══════════════════════════════════════════════════════

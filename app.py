@@ -2469,7 +2469,7 @@ elif page == "🔍 منتجات مفقودة":
                         use_container_width=True,
                     )
                 with _dl_c2:
-                    _salla_fast = export_to_salla_shamel(filtered, generate_descriptions=False)
+                    _salla_fast = export_to_salla_shamel(filtered, generate_descriptions=True)
                     st.download_button(
                         "📥 سلة الشامل",
                         data=_salla_fast,
@@ -2986,7 +2986,7 @@ elif page == "🔍 منتجات مفقودة":
                                 key="ai_desc_dl",
                                 use_container_width=True,
                             )
-                    _salla_fast_f = export_to_salla_shamel(filtered, generate_descriptions=False)
+                    _salla_fast_f = export_to_salla_shamel(filtered, generate_descriptions=True)
                     st.download_button(
                         "📥 سلة الشامل (بدون وصف AI)",
                         data=_salla_fast_f,

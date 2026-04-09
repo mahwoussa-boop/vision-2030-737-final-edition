@@ -450,10 +450,19 @@ def export_to_salla_shamel(
             brand_out = _best_brand_from_csv(brand) if brand else ""
 
         # ── الوصف — HTML نقي (لا Markdown) ──────────────────────────────
-        if generate_descriptions:
+        # أولوية: الوصف الموجود في الملف المرفوع (إذا كان يحتوي على HTML) ثم التوليد
+        uploaded_desc = str(r.get("الوصف", "") or r.get("Description", "") or "").strip()
+        
+        if uploaded_desc and ("<h" in uploaded_desc or "<p" in uploaded_desc):
+            desc_text = uploaded_desc
+        elif generate_descriptions:
             try:
                 from engines.ai_engine import generate_salla_html_description
                 raw_scraped = str(r.get("raw_description", "") or "").strip()
+                # إذا لم يتوفر raw_description، نحاول استخدام الوصف المرفوع كنص خام
+                if not raw_scraped and uploaded_desc:
+                    raw_scraped = _strip_html_visible(uploaded_desc)
+                
                 desc_text = generate_salla_html_description(pname, raw_scraped)
             except Exception as _e:
                 _logger.warning("generate_salla_html_description فشل للمنتج '%s': %s", pname, _e)

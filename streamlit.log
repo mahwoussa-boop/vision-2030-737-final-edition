@@ -39,3 +39,94 @@ For `use_container_width=True`, use `width='stretch'`. For `use_container_width=
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
 update_competitor_price: فشل تحديث سعر 'leesanto.com/product/p757830901' — database is locked
+2026-04-08 22:29:51.286 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+save_job_progress: results_json مقطوع الحقل الثقيل (2588 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2618 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2642 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2667 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2690 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2715 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2739 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2768 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2791 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2815 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2841 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2868 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2895 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2919 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2939 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2970 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (2993 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3020 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3042 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3066 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3089 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3117 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3136 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3166 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3191 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3211 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3236 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3264 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3284 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3313 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3338 صف)
+save_job_progress: results_json مقطوع الحقل الثقيل (3360 صف)
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3388
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3413
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3435
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3459
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3489
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3511
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3540
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3562
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3585
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3610
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3635
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3666
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3687
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3712
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3737
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3759
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3788
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3810
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3835
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3864
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3888
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3913
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3935
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3960
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 3985
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4013
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4035
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4063
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4087
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4116
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4137
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4159
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4191
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4215
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4234
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4263
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4291
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4312
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4333
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4356
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4385
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4407
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4438
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4457
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4484
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4507
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4531
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4555
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4587
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4610
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4630
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4658
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4679
+save_job_progress: results_json مقتطع إلى آخر 1000 صف من 4711

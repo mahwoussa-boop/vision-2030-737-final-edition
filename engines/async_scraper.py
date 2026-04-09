@@ -54,7 +54,7 @@ PROGRESS_FILE    = _DATA_DIR / "scraper_progress.json"
 LASTMOD_FILE     = _DATA_DIR / "scraper_lastmod_cache.json"
 ERROR_LOG        = _DATA_DIR / "scraper_errors.log"
 
-CSV_COLS = ["store", "name", "price", "image", "url", "brand", "sku", "scraped_at"]
+CSV_COLS = ["store", "name", "price", "image", "url", "brand", "sku", "scraped_at", "raw_description"]
 
 # ── إعداد logging ─────────────────────────────────────────────────────────
 def _setup_logging() -> None:
