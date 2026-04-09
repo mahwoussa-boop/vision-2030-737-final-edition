@@ -337,23 +337,7 @@ def _is_scraper_column_name(col):
 
 
 def _drop_scraper_columns(df):
-    """حذف أعمدة تبدو كمخرجات كشط وليست حقولاً حقيقية."""
-    if df is None or df.empty:
-        return df
-    # لا نحذف أعمدة الكشط الخام قبل أن نضمن وجود أعمدة قياسية.
-    # بعض ملفات المنافسين تأتي برؤوس CSS فقط (text-sm-2 / abs-size href / w-full src).
-    canonical_headers = {
-        "اسم المنتج", "المنتج", "سعر المنتج", "السعر",
-        "صورة المنتج", "رابط المنتج", "الماركة",
-    }
-    has_canonical = any(str(c).strip() in canonical_headers for c in df.columns)
-    if not has_canonical:
-        return df
-    keep = [c for c in df.columns if not _is_scraper_column_name(c)]
-    if not keep:
-        return df
-    if len(keep) < len(df.columns):
-        return df[keep].copy()
+    """تم تعطيل الحذف لضمان الحفاظ على كافة بيانات الكشط والملفات."""
     return df
 
 
@@ -1011,14 +995,17 @@ def normalize(text):
     """تطبيع قياسي: يوحّد الحروف والمرادفات مع الحفاظ على كامل النص"""
     if not isinstance(text, str): return ""
     t = text.strip().lower()
-    # 1. توحيد الهمزات أولاً (قبل أي استبدال)
+    # 1. توحيد الهمزات والحروف العربية المتشابهة
     for src, dst in [('أ','ا'),('إ','ا'),('آ','ا'),('ة','ه'),
-                     ('ى','ي'),('ؤ','و'),('ئ','ي'),('ـ','')]:
+                     ('ى','ي'),('ؤ','و'),('ئ','ي'),('ـ',''),
+                     ('گ','ك'),('چ','ج'),('پ','ب'),('ڤ','ف')]:
         t = t.replace(src, dst)
-    # 2. المرادفات المخصصة
+    # 2. إزالة ال التعريف من بداية الكلمات العربية لزيادة دقة المطابقة
+    t = re.sub(r'\bال([\u0600-\u06FF])', r'\1', t)
+    # 3. المرادفات المخصصة
     for k, v in WORD_REPLACEMENTS.items():
         t = t.replace(k.lower(), v)
-    # 3. قاموس المرادفات الشامل
+    # 4. قاموس المرادفات الشامل
     for k, v in _SYN.items():
         t = t.replace(k, v)
     t = re.sub(r'[^\w\s\u0600-\u06FF.]', ' ', t)
@@ -1029,24 +1016,26 @@ def normalize_name(text):
     """
     الدالة الموحدة للمطابقة — تُستخدم حصراً لمقارنة الأسماء.
     تحذف: عطر/بارفيوم/بيرفيوم/تستر/مل/edp/edt/للجنسين/100/50/...
-    توحّد: أ/إ/آ→ا  ة/ه→ه  ى→ي
+    توحّد: أ/إ/آ→ا  ة/ه→ه  ى→ي  + إزالة ال التعريف
     المثال: 'عطر ايسينشيال بيرفيوم فيج انفيوجن 100مل' → 'essential فيج infusion'
     """
     if not isinstance(text, str): return ""
     t = text.strip().lower()
-    # 1. توحيد الهمزات أولاً
+    # 1. توحيد الهمزات والحروف العربية
     for src, dst in [('أ','ا'),('إ','ا'),('آ','ا'),('ة','ه'),
-                     ('ى','ي'),('ؤ','و'),('ئ','ي'),('ـ','')]:
+                     ('ى','ي'),('ؤ','و'),('ئ','ي'),('ـ',''),
+                     ('گ','ك'),('چ','ج'),('پ','ب'),('ڤ','ف')]:
         t = t.replace(src, dst)
-    # 2. قاموس المرادفات — استبدال بحدود مسافات لمنع تشويه الكلمات الأطول
-    #    مثال: "بلو" لا يُستبدل داخل "بلوزة" لأن الفحص يشترط مسافة على الجانبين
+    # 2. إزالة ال التعريف
+    t = re.sub(r'\bال([\u0600-\u06FF])', r'\1', t)
+    # 3. قاموس المرادفات — استبدال بحدود مسافات
     t = ' ' + t + ' '
     for k, v in _SYN.items():
         t = t.replace(' ' + k + ' ', ' ' + v + ' ')
     t = t.strip()
-    # 3. حذف كلمات الضجيج
+    # 4. حذف كلمات الضجيج
     t = _NOISE_RE.sub(' ', t)
-    # 4. حذف الأرقام المتبقية + الرموز
+    # 5. حذف الأرقام المتبقية + الرموز
     t = re.sub(r'\b\d+\b', ' ', t)
     t = re.sub(r'[^\w\s\u0600-\u06FF]', ' ', t)
     return re.sub(r'\s+', ' ', t).strip()
@@ -1651,12 +1640,19 @@ class CompIndex:
             c_gd = self.genders[idx]
             c_pl = self.plines[idx]
 
-            # ═══ فلاتر سريعة ═══
-            if our_br and c_br and normalize(our_br) != normalize(c_br): continue
-            if our_sz > 0 and c_sz > 0 and abs(our_sz - c_sz) > 30: continue
-            if our_tp and c_tp and our_tp != c_tp:
-                if our_sz > 0 and c_sz > 0 and abs(our_sz - c_sz) > 3: continue
-            if our_gd and c_gd and our_gd != c_gd: continue
+            # ═══ فلاتر سريعة (تم تخفيفها لزيادة اكتشاف الفرص) ═══
+            if our_br and c_br and normalize(our_br) != normalize(c_br):
+                # إذا كانت الماركة مختلفة تماماً، نتخطى، لكن نسمح ببعض الاختلافات البسيطة في التطبيع
+                if fuzz.ratio(normalize(our_br), normalize(c_br)) < 80:
+                    continue
+            # زيادة التسامح في الحجم من 30 إلى 50 مل لاكتشاف مطابقات أكثر (مثل 75 مل مقابل 100 مل)
+            if our_sz > 0 and c_sz > 0 and abs(our_sz - c_sz) > 50: continue
+            # تخفيف فلتر النوع (EDP vs EDT) للسماح بالمراجعة اليدوية بدل الحذف التلقائي
+            # if our_tp and c_tp and our_tp != c_tp: ... (تم التعطيل مؤقتاً لزيادة الفرص)
+            # تخفيف فلتر الجنس
+            if our_gd and c_gd and our_gd != c_gd:
+                if our_gd != "unisex" and c_gd != "unisex": # السماح إذا كان أحدهما للجنسين
+                    continue
 
             # ═══ فلتر تصنيف المنتج (retail/tester/set/hair_mist) ═══
             our_class = classify_product(our_norm)
@@ -2116,13 +2112,13 @@ def _row(product, our_price, our_id, brand, size, ptype, gender,
         risk = "🟢 منخفض"
 
     # ═══ توزيع النتائج على الأقسام ═════════════════════════════════════
-    # الحدود المستخدمة:
-    #   score ≥ 85%           → مطابقة مؤكدة → توزيع سعري
-    #   60% ≤ score < 85%     → تحت المراجعة (مطابقة محتملة)
-    #   score < 60%           → صف «مستبعد» عبر _excluded_match_row (لا إخفاء صامت)
-    PRICE_DIFF_THRESHOLD = 10  # فرق السعر المقبول بالريال
-    NO_MATCH_THRESHOLD   = 60  # أقل من هذا → غير متطابق → يُخفى
-    REVIEW_MAX           = 85  # أقل من هذا → مراجعة
+    # الحدود المحدثة لزيادة اكتشاف الفرص:
+    #   score ≥ 75%           → مطابقة مؤكدة (تم خفضها من 85 لزيادة الفرص)
+    #   50% ≤ score < 75%     → تحت المراجعة (مطابقة محتملة)
+    #   score < 50%           → صف «مستبعد»
+    PRICE_DIFF_THRESHOLD = 5   # فرق السعر المقبول بالريال (أكثر دقة)
+    NO_MATCH_THRESHOLD   = 50  # أقل من هذا → غير متطابق
+    REVIEW_MAX           = 75  # أقل من هذا → مراجعة
     if override:
         dec = override
     elif score < NO_MATCH_THRESHOLD:
@@ -2264,25 +2260,26 @@ def run_full_analysis(our_df, comp_dfs, progress_callback=None, use_ai=True):
             row_dict["حالة_السعر"] = ""
         return row_dict
 
-    def _flush():
+    def _flush(pending_list, results_list):
         """يُعالج الـ pending batch ويضيف النتائج — محمي من الأخطاء، يحمل تبريرات Chain-of-Thought"""
-        if not pending:
+        if not pending_list:
             return
         try:
-            idxs, reasons = _ai_batch(pending)
+            idxs, reasons = _ai_batch(pending_list)
         except Exception:
-            # فشل AI → fallback: استخدم أفضل مرشح fuzzy
+            # فشل AI → fallback: استخدم أفضل مرشح fuzzy مع عتبة أقل لضمان عدم ضياع الفرص
             idxs, reasons = [], []
-            for it in pending:
+            for it in pending_list:
                 cands = it.get("candidates", [])
-                if cands and cands[0].get("score", 0) >= 88:
+                # خفض العتبة من 88 إلى 70 لضمان اكتشاف المزيد من المطابقات عند فشل AI
+                if cands and cands[0].get("score", 0) >= 70:
                     idxs.append(0)
                     reasons.append(f"تطابق fuzzy ({cands[0].get('score',0):.0f}%) — فشل AI")
                 else:
                     idxs.append(-1)
                     reasons.append("فشل AI والـ fuzzy دون الحد الأدنى")
 
-        for j, it in enumerate(pending):
+        for j, it in enumerate(pending_list):
             try:
                 ci     = idxs[j]   if j < len(idxs)   else 0
                 reason = reasons[j] if j < len(reasons) else ""
@@ -2303,11 +2300,11 @@ def run_full_analysis(our_df, comp_dfs, progress_callback=None, use_ai=True):
                               our_img=it.get("our_img", ""), our_url=it.get("our_url", ""),
                               ai_reason=reason)
                 if rr is not None:
-                    results.append(_inject_price_alert(rr))
+                    results_list.append(_inject_price_alert(rr))
             except Exception:
                 # خطأ في منتج واحد → تخطيه وأكمل
                 continue
-        pending.clear()
+        pending_list.clear()
         # تأخير صغير بين الباتشات لمنع rate limit
         try:
             time.sleep(0.5)
@@ -2475,12 +2472,12 @@ def run_full_analysis(our_df, comp_dfs, progress_callback=None, use_ai=True):
                     our_img=our_img, our_url=our_url,
                 ))
             if len(pending) >= BATCH:
-                _flush()
+                _flush(pending, results)
 
         if progress_callback:
             progress_callback((i + 1) / total, results)
 
-    _flush()
+    _flush(pending, results)
 
     # ── تنظيف الذاكرة بعد المعالجة الثقيلة ──────────────────────────────
     _out = pd.DataFrame(results)
